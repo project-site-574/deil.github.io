@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Deformable Neural Radiance Fields creates free-viewpoint portraits (nerfies) from casually captured videos.">
+  <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DEIL: Depth-Estimated Imitation Learning</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <script>
+
+    function updateVideo() {
+      var task = document.getElementById("menu-tasks").value;
+      var level = document.getElementById("menu-levels").value;
+
+      if (!task) {
+        return;
+      }
+
+      console.log("menu", level, task)
+
+      var methods = [
+        { id: "interactive-video-gt", suffix: "gt" },
+        { id: "interactive-video-pi3", suffix: "pi3" },
+        { id: "interactive-video-vggt", suffix: "vggt" },
+      ];
+
+      methods.forEach(function(method) {
+        var video = document.getElementById(method.id);
+        if (!video) {
+          return;
+        }
+
+        video.src = "static/videos/" + level + "/" + task + "_" + method.suffix + ".mp4";
+        video.play();
+      });
+      // video.playbackRate = 1.75;
+      // video.play();
+    }
+
+    function populateTaskOptions() {
+      var level = document.getElementById("menu-levels").value;
+      var taskSelect = document.getElementById("menu-tasks");
+      if (!taskSelect) {
+        return;
+      }
+
+      var taskOptionsByLevel = {
+        challenging: [
+          { value: "transparent_cup_into_bin", label: "Tranparent Cup into Bin." },
+          { value: "box_into_transparent_basket", label: "Box into Transparent Basket." },
+          { value: "tilt_mesh_basket_to_pour_out_fruit", label: "Tile Mesh Basket to Pour Out Fruit." },
+          { value: "bottle_in_mesh_basket", label: "Bottle in Mesh Basket." },
+          { value: "metal_bowl_on_plate", label: "Metal Bowl on Plate." },
+          { value: "pick_up_goblet_near_mirror", label: "Pick Up Goblet Near Mirror." },
+          { value: "mug_on_box", label: "Mug on Box." },
+          { value: "pick_up_kettle_and_place_on_stove", label: "Pick Up Kettle and Place on Stove." },
+          { value: "pick_up_bread_and_place_on_plate", label: "Pick Up Bread and Place on Plate." },
+        ],
+        normal: [
+          { value: "cup_in_bin", label: "Cup in Bin."},
+          { value: "box_into_basket", label: "Box into Basket."},
+          { value: "tilt_basket_to_pour_out_fruit", label: "Tilt Basket to Pour Out Fruit."},
+          { value: "bowl_on_plate", label: "Bowl on Plate."},
+          { value: "stack_cups", label: "Stack Cups."},
+        ]
+      };
+
+      var options = taskOptionsByLevel[level] || [];
+      taskSelect.innerHTML = "";
+
+      options.forEach(function(option, index) {
+        var element = document.createElement("option");
+        element.value = option.value;
+        element.textContent = option.label;
+        if (option.disabled) {
+          element.disabled = true;
+        }
+        if (index === 0) {
+          element.selected = true;
+        }
+        taskSelect.appendChild(element);
+      });
+    }
+
+    function updateTaskHighlight() {
+      var task = document.getElementById("menu-tasks").value;
+      var badge = document.getElementById("task-highlight-badge");
+      if (!badge) {
+        return;
+      }
+
+      var labels = {
+        "transparent_cup_into_bin": { text: "TRANSPARENT", className: "task-type-transparent" },
+        "box_into_transparent_basket": { text: "TRANSPARENT", className: "task-type-transparent" },
+        "tilt_mesh_basket_to_pour_out_fruit": { text: "MESH", className: "task-type-mesh" },
+        "bottle_in_mesh_basket": { text: "MESH", className: "task-type-mesh" },
+        "metal_bowl_on_plate": { text: "MIRROR", className: "task-type-mirror" },
+        "pick_up_goblet_near_mirror": { text: "MIRROR", className: "task-type-mirror" },
+        "pick_up_kettle_and_place_on_stove": { text: "CLOSE", className: "task-type-close" },
+        "mug_on_box": { text: "CLOSE", className: "task-type-close" },
+        "pick_up_bread_and_place_on_plate": { text: "CLOSE", className: "task-type-close" },
+        "cup_in_bin": { text: "NORMAL", className: "task-type-default" },
+        "box_into_basket": { text: "NORMAL", className: "task-type-default" },
+        "tilt_basket_to_pour_out_fruit": { text: "NORMAL", className: "task-type-default" },
+        "bowl_on_plate": { text: "NORMAL", className: "task-type-default" },
+        "stack_cups": { text: "NORMAL", className: "task-type-default" }
+      };
+
+      var current = labels[task] || { text: "TASK", className: "task-type-default" };
+      badge.textContent = "[" + current.text + "]";
+      badge.className = "task-highlight-badge " + current.className;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      populateTaskOptions();
+      updateTaskHighlight();
+    });
+
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">DEIL: Depth-Estimated Imitation Learning</h1>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"></sup>Anonymous RA-L Submission</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-01">
+          <video poster="" id="01" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/challenging/transparent_cup_into_bin_pi3.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-02">
+          <video poster="" id="02" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/challenging/box_into_transparent_basket_pi3.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-03">
+          <video poster="" id="03" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/challenging/tilt_mesh_basket_to_pour_out_fruit_pi3.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-04">
+          <video poster="" id="04" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/challenging/pick_up_goblet_near_mirror.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-blueshirt">
+          <video poster="" id="blueshirt" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/challenging/metal_bowl_on_plate.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Point cloud–based imitation learning has emerged as a powerful approach for robotic 
+            manipulation, enabling policies to reason explicitly about 3D geometry. In such pipelines, 
+            depth image acquisition plays a critical role in point cloud construction. However, raw 
+            depth from RGB-D cameras is often noisy, sensitive to transparent, reflective, and 
+            repetitive surfaces, and fundamentally limited by a minimum sensing distance. 
+          </p>
+          <p>
+            Recent advances in learned depth estimation offer a promising alternative: modern monocular, 
+            stereo, and multi-view approaches have achieved impressive performance in vision benchmarks. 
+            However, robotics still lacks a systematic understanding of how these advances translate to 
+            end-to-end policy learning and execution.
+          </p>
+          <p>
+            In this work, based on our introduced <span class="dnerf">Depth-Estimated Imitation Learning <strong>(DEIL)</strong></span> general framework, we present the first systematic study of how modern depth estimation impacts point cloud–based imitation learning across two paradigms: Behaviour Cloning and In-Context Imitation Learning. Using 3D Diffusion Policy and Instant Policy as representative frameworks, we evaluate depth sensing alongside learned monocular, stereo, and multi-view depth pipelines through their downstream effect on robot performance. Our results show that depth estimation approaches could narrow the gap to depth images from depth cameras. Moreover, it delivers significant gains in real-world manipulation tasks under challenging visual conditions.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paper video. -->
+    <!-- <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+          <iframe src=" "
+                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div> -->
+    <!--/ Paper video. -->
+  <!-- </div> -->
+</section>
+
+<section class="section">
+  <div class="container is-max-widescreen">
+
+    <div class="columns is-centered">
+      
+      <!-- Overview -->
+      <div class="column">
+        <div class="content">
+          <h2 class="title is-3"><span class="dnerf">DEIL: Depth-Estimated Imitation Learning</span></h2>
+          <p>
+            To systematically study the role of depth estimation in imitation learning—particularly under challenging perceptual conditions—we propose a general framework <span class="dnerf">DEIL</span>. The framework consists of three main components: 
+            (1) a depth estimation module, 
+            (2) a point cloud reconstruction module, and 
+            (3) an imitation learning module. 
+            This modular design allows us to plug in different depth estimation methods while holding the learning framework fixed, enabling controlled evaluation of their impact on robot policy performance.
+          </p>
+
+          <img src="./static/images/DEIL_pipeline.png" 
+              class="mb-5"
+              alt="Interpolate start reference image."/>
+
+          <p>
+            First, in the depth estimation stage, raw RGB images are passed through a depth estimator to produce corresponding depth maps. Second, using the camera intrinsics and extrinsics, unscaled point clouds are reconstructed from each camera view, and a Scaled ICP method is applied to align and merge them into a unified representation. Third, point cloud–based behaviour cloning or in-context imitation learning methods are trained on the reconstructed 3D representations generated by the previous modules.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Overview -->
+
+    <!-- Results. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Results</h2>
+
+        <!-- Simulation Results. -->
+        <h3 class="title is-4">Simulation Results</h3>
+        <div class="content has-text-justified">
+          <p>
+            To select a strong and practical configuration for each depth estimator, we first conduct a preliminary hyperparameter study in simulation. It is carried out in the ICIL paradigm, which is lightweight and allows rapid iteration over perception configurations. Specifically, we evaluate different combinations of the above hyperparameters on 10 manipulation tasks from RLBench and identify a set of <strong>optimised depth estimation configurations</strong> that yield strong performance for each depth estimator. For each task and configuration, we collect 5 demos. Then, we condition each demo as a single context and run Instant Policy for 2 rollouts, recording the average success rate for each setting. After that, we average across 10 tasks to obtain the final results, which is reported in <a href="#appendix-simulation-results">Appendix I</a>.
+          </p>
+        </div>
+        <!--/ Simulation Results. -->
+
+        <!-- Real-World Results. -->
+        <h3 class="title is-4">Real-World Results</h3>
+        <div class="content has-text-justified">
+          <p>
+            We evaluate the performance of different depth estimation methods on a suite of real-world manipulation tasks under challenging visual conditions, including transparent, reflective, and textureless objects. Our results show that depth estimation approaches could narrow the gap to depth images from depth cameras. Moreover, it delivers significant gains in real-world manipulation tasks under challenging visual conditions.
+          </p>
+        </div>
+        <!--/ Real-World Results. -->
+
+        <h4 class="title is-5">In-Context Imitation Learning</h4>
+
+        <div class="columns">
+          <div class="column has-text-centered">
+
+            ICIL task category:
+            <div class="select is-small is-rounded">     
+              <select id="menu-levels" onchange="populateTaskOptions(); updateVideo(); updateTaskHighlight();">
+              <option value="challenging" selected="selected">Challenging</option>
+              <option value="normal">Normal</option>
+              </select>
+            </div>
+
+            ICIL task name: 
+            <div class="select is-small is-rounded">     
+              <select id="menu-tasks" onchange="updateVideo(); updateTaskHighlight();">
+              </select>
+            </div>
+            <span id="task-highlight-badge" class="task-highlight-badge">[TRANSPARENT]</span>
+
+          </div>
+
+        </div>
+
+        <div class="columns">
+          <div class="column is-one-third has-text-centered">
+            <p style="text-align:center;">
+              <video style="border-radius: 7px;" id="interactive-video-gt" width="100%" height="100%" controls autoplay loop muted>
+                <source src="./static/videos/challenging/transparent_cup_into_bin_gt.mp4" type="video/mp4">
+              </video>
+              <span style="color: #EA4335; font-weight: bold;">Depth camera</span>-based DEIL
+            </p>
+          </div>
+          <div class="column is-one-third has-text-centered">
+            <p style="text-align:center;">
+              <video style="border-radius: 7px;" id="interactive-video-pi3" width="100%" height="100%" controls autoplay loop muted>
+                <source src="./static/videos/challenging/transparent_cup_into_bin_pi3.mp4" type="video/mp4">
+              </video>
+              <span style="color: #34A853; font-weight: bold;">&pi;<sup>3</sup></span>-based DEIL
+            </p>
+          </div>
+          <div class="column is-one-third has-text-centered">
+            <p style="text-align:center;">
+              <video style="border-radius: 7px;" id="interactive-video-vggt" width="100%" height="100%" controls autoplay loop muted>
+                <source src="./static/videos/challenging/transparent_cup_into_bin_vggt.mp4" type="video/mp4">
+              </video>
+              <span style="color: #1967D2; font-weight: bold;">VGGT</span>-based DEIL 
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!--/ Results.. -->
+
+  </div>
+</section>
+
+<section class="section" id="appendix-simulation-results">
+  <div class="container is-max-widescreen">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Appendix</h2>
+        <h3 class="title is-4">I. Preliminary Hyperparameter Selection Results</h3>
+        <div id="simulation-results-status" class="notification is-light">
+          Loading simulation results from Excel...
+        </div>
+        <div id="simulation-results-table" class="table-container"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            Website template borrowed from <a href="https://github.com/nerfies/nerfies.github.io">NeRFies</a>, <a href="https://peract.github.io/">PerAct</a> and <a href="https://voxposer.github.io/">VoxPoser</a>. 
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
