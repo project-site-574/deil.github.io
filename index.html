@@ -157,11 +157,10 @@
 
 <section class="hero">
   <div class="hero-body">
-    <div class="container is-max-desktop">
+    <div class="container is-widescreen">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">DEIL: Depth-Estimated Imitation Learning</h1>
-
+          <h1 class="title is-1 publication-title">Depth Camera or RGB-to-Depth?<br>A Study of RGB-to-Depth Estimation for Robot Policy Learning</h1>
           <div class="is-size-5 publication-authors">
             <span class="author-block"></sup>Anonymous RA-L Submission</span>
           </div>
@@ -220,20 +219,13 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Point cloud–based imitation learning has emerged as a powerful approach for robotic 
-            manipulation, enabling policies to reason explicitly about 3D geometry. In such pipelines, 
-            depth image acquisition plays a critical role in point cloud construction. However, raw 
-            depth from RGB-D cameras is often noisy, sensitive to transparent, reflective, and 
-            repetitive surfaces, and fundamentally limited by a minimum sensing distance. 
+            Point cloud–based robot policy learning has emerged as a powerful approach for robotic manipulation, as it enables policies to leverage 3D geometric structure directly from observations. In such pipelines, depth image acquisition plays a critical role in point cloud construction. However, raw depth from depth cameras is often noisy, sensitive to transparent, reflective, and repetitive surfaces, and limited by a minimum sensing distance. 
           </p>
           <p>
-            Recent advances in learned depth estimation offer a promising alternative: modern monocular, 
-            stereo, and multi-view approaches have achieved impressive performance in vision benchmarks. 
-            However, robotics still lacks a systematic understanding of how these advances translate to 
-            end-to-end policy learning and execution.
+            Recent advances in learned depth estimation offer a promising alternative: modern monocular, stereo, and multi-view approaches have achieved impressive performance in vision benchmarks. However, robotics still lacks a systematic understanding of how these advances translate to end-to-end policy learning and execution.
           </p>
           <p>
-            In this work, based on our introduced <span class="dnerf">Depth-Estimated Imitation Learning <strong>(DEIL)</strong></span> general framework, we present the first systematic study of how modern depth estimation impacts point cloud–based imitation learning across two paradigms: Behaviour Cloning and In-Context Imitation Learning. Using 3D Diffusion Policy and Instant Policy as representative frameworks, we evaluate depth sensing alongside learned monocular, stereo, and multi-view depth pipelines through their downstream effect on robot performance. Our results show that depth estimation approaches could narrow the gap to depth images from depth cameras. Moreover, it delivers significant gains in real-world manipulation tasks under challenging visual conditions.
+            In this work, based on our introduced <span class="dnerf">Depth-Estimated Imitation Learning <strong>(DEIL)</strong></span> general framework, we present the first systematic study of how modern depth estimation impacts point cloud–based imitation learning across two paradigms: In-Context Imitation Learning and Behaviour Cloning. We evaluate depth camera sensing alongside learned monocular, stereo, and multi-view depth estimation pipelines through their downstream effect on robot performance. Through 160 rollouts in real-world and 46900 rollouts in simulation, our results show that strong multi-view depth estimators can substantially improve real-world manipulation in challenging settings where depth cameras are unreliable, but they are not yet a drop-in replacement for depth cameras overall, especially for behaviour cloning.
           </p>
         </div>
       </div>
@@ -263,7 +255,7 @@
         <div class="content">
           <h2 class="title is-3"><span class="dnerf">DEIL: Depth-Estimated Imitation Learning</span></h2>
           <p>
-            To systematically study the role of depth estimation in imitation learning—particularly under challenging perceptual conditions—we propose a general framework <span class="dnerf">DEIL</span>. The framework consists of three main components: 
+            To systematically study the role of depth estimation in imitation learning, particularly under challenging perceptual conditions, we propose a general framework <span class="dnerf">DEIL</span>. The framework consists of three main components: 
             (1) a depth estimation module, 
             (2) a point cloud reconstruction module, and 
             (3) an imitation learning module. 
