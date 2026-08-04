@@ -182,6 +182,170 @@ body {
   color: #5d6d7e;
 }
 
+.simulation-video-grid video {
+  display: block;
+  aspect-ratio: 16 / 7;
+  margin-bottom: 0.5rem;
+  border-radius: 7px;
+  background: #000;
+  object-fit: contain;
+}
+
+.simulation-video-outcome {
+  margin-left: 0.4rem;
+  vertical-align: middle;
+}
+
+.simulation-video-outcome:empty {
+  display: none;
+}
+
+.rollout-sequence-panel {
+  margin-top: 2.5rem;
+  margin-bottom: 3rem;
+  padding: 1.25rem;
+  border: 1px solid #e1e6ed;
+  border-radius: 10px;
+  background: #fafbfc;
+}
+
+.rollout-sequence-panel:focus-visible {
+  outline: 3px solid rgba(50, 115, 220, 0.35);
+  outline-offset: 3px;
+}
+
+.rollout-sequence-title {
+  margin-bottom: 0.35rem !important;
+}
+
+.rollout-sequence-description {
+  margin-bottom: 1rem;
+  color: #5d6673;
+}
+
+.rollout-sequence-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.rollout-sequence-controls .button {
+  display: inline-flex;
+  gap: 0.35rem;
+  min-width: 7rem;
+  justify-content: center;
+}
+
+.rollout-sequence-step-label {
+  min-width: 6.5rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.rollout-sequence-slider-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.8rem;
+  max-width: 720px;
+  margin: 0 auto 1rem;
+}
+
+.rollout-sequence-slider-row label {
+  color: #4a4a4a;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.rollout-sequence-slider-row .slider {
+  margin: 0 !important;
+}
+
+.rollout-sequence-viewport {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.rollout-sequence-table {
+  width: 50%;
+  min-width: 480px;
+  margin: 0 auto;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0.65rem 0.55rem;
+  background: transparent;
+}
+
+.rollout-sequence-table th,
+.rollout-sequence-table td {
+  border: 0;
+  padding: 0;
+  vertical-align: middle;
+}
+
+.rollout-sequence-table thead th {
+  padding-bottom: 0.15rem;
+  color: #4a4a4a;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.rollout-sequence-table thead th:first-child,
+.rollout-sequence-table tbody th {
+  width: 5.5rem;
+}
+
+.rollout-sequence-table tbody th {
+  padding: 0.6rem 0.4rem;
+  border-radius: 7px;
+  background: #edf1f6;
+  color: #344054;
+  text-align: center;
+}
+
+.rollout-sequence-table tbody th span,
+.rollout-sequence-table tbody th small {
+  display: block;
+}
+
+.rollout-sequence-table tbody th small {
+  color: #6b7280;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.rollout-sequence-table img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid #d9dee7;
+  border-radius: 7px;
+  background: #000;
+  object-fit: cover;
+}
+
+@media screen and (max-width: 768px) {
+  .rollout-sequence-panel {
+    padding: 1rem 0.75rem;
+  }
+
+  .rollout-sequence-controls {
+    gap: 0.5rem;
+  }
+
+  .rollout-sequence-controls .button {
+    min-width: auto;
+  }
+
+  .rollout-sequence-slider-row {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+}
+
 #appendix-simulation-results .notification {
   margin-bottom: 1rem;
 }

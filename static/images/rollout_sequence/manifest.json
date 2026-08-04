@@ -1,0 +1,698 @@
+{
+  "schema_version": 1,
+  "frame_count": 46,
+  "step_definition": "step 0 is the reset observation; later steps follow each simulator action",
+  "mask_encoding": "binary PNG: foreground=255, background=0",
+  "steps": [
+    {
+      "step_index": 0,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0000/front_raw_rgb.png",
+          "mask": "step_0000/front_mask.png",
+          "masked_rgb": "step_0000/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0000/left_shoulder_raw_rgb.png",
+          "mask": "step_0000/left_shoulder_mask.png",
+          "masked_rgb": "step_0000/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 1,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0001/front_raw_rgb.png",
+          "mask": "step_0001/front_mask.png",
+          "masked_rgb": "step_0001/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0001/left_shoulder_raw_rgb.png",
+          "mask": "step_0001/left_shoulder_mask.png",
+          "masked_rgb": "step_0001/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 2,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0002/front_raw_rgb.png",
+          "mask": "step_0002/front_mask.png",
+          "masked_rgb": "step_0002/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0002/left_shoulder_raw_rgb.png",
+          "mask": "step_0002/left_shoulder_mask.png",
+          "masked_rgb": "step_0002/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 3,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0003/front_raw_rgb.png",
+          "mask": "step_0003/front_mask.png",
+          "masked_rgb": "step_0003/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0003/left_shoulder_raw_rgb.png",
+          "mask": "step_0003/left_shoulder_mask.png",
+          "masked_rgb": "step_0003/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 4,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0004/front_raw_rgb.png",
+          "mask": "step_0004/front_mask.png",
+          "masked_rgb": "step_0004/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0004/left_shoulder_raw_rgb.png",
+          "mask": "step_0004/left_shoulder_mask.png",
+          "masked_rgb": "step_0004/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 5,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0005/front_raw_rgb.png",
+          "mask": "step_0005/front_mask.png",
+          "masked_rgb": "step_0005/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0005/left_shoulder_raw_rgb.png",
+          "mask": "step_0005/left_shoulder_mask.png",
+          "masked_rgb": "step_0005/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 6,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0006/front_raw_rgb.png",
+          "mask": "step_0006/front_mask.png",
+          "masked_rgb": "step_0006/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0006/left_shoulder_raw_rgb.png",
+          "mask": "step_0006/left_shoulder_mask.png",
+          "masked_rgb": "step_0006/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 7,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0007/front_raw_rgb.png",
+          "mask": "step_0007/front_mask.png",
+          "masked_rgb": "step_0007/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0007/left_shoulder_raw_rgb.png",
+          "mask": "step_0007/left_shoulder_mask.png",
+          "masked_rgb": "step_0007/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 8,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0008/front_raw_rgb.png",
+          "mask": "step_0008/front_mask.png",
+          "masked_rgb": "step_0008/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0008/left_shoulder_raw_rgb.png",
+          "mask": "step_0008/left_shoulder_mask.png",
+          "masked_rgb": "step_0008/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 9,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0009/front_raw_rgb.png",
+          "mask": "step_0009/front_mask.png",
+          "masked_rgb": "step_0009/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0009/left_shoulder_raw_rgb.png",
+          "mask": "step_0009/left_shoulder_mask.png",
+          "masked_rgb": "step_0009/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 10,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0010/front_raw_rgb.png",
+          "mask": "step_0010/front_mask.png",
+          "masked_rgb": "step_0010/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0010/left_shoulder_raw_rgb.png",
+          "mask": "step_0010/left_shoulder_mask.png",
+          "masked_rgb": "step_0010/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 11,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0011/front_raw_rgb.png",
+          "mask": "step_0011/front_mask.png",
+          "masked_rgb": "step_0011/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0011/left_shoulder_raw_rgb.png",
+          "mask": "step_0011/left_shoulder_mask.png",
+          "masked_rgb": "step_0011/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 12,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0012/front_raw_rgb.png",
+          "mask": "step_0012/front_mask.png",
+          "masked_rgb": "step_0012/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0012/left_shoulder_raw_rgb.png",
+          "mask": "step_0012/left_shoulder_mask.png",
+          "masked_rgb": "step_0012/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 13,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0013/front_raw_rgb.png",
+          "mask": "step_0013/front_mask.png",
+          "masked_rgb": "step_0013/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0013/left_shoulder_raw_rgb.png",
+          "mask": "step_0013/left_shoulder_mask.png",
+          "masked_rgb": "step_0013/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 14,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0014/front_raw_rgb.png",
+          "mask": "step_0014/front_mask.png",
+          "masked_rgb": "step_0014/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0014/left_shoulder_raw_rgb.png",
+          "mask": "step_0014/left_shoulder_mask.png",
+          "masked_rgb": "step_0014/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 15,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0015/front_raw_rgb.png",
+          "mask": "step_0015/front_mask.png",
+          "masked_rgb": "step_0015/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0015/left_shoulder_raw_rgb.png",
+          "mask": "step_0015/left_shoulder_mask.png",
+          "masked_rgb": "step_0015/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 16,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0016/front_raw_rgb.png",
+          "mask": "step_0016/front_mask.png",
+          "masked_rgb": "step_0016/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0016/left_shoulder_raw_rgb.png",
+          "mask": "step_0016/left_shoulder_mask.png",
+          "masked_rgb": "step_0016/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 17,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0017/front_raw_rgb.png",
+          "mask": "step_0017/front_mask.png",
+          "masked_rgb": "step_0017/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0017/left_shoulder_raw_rgb.png",
+          "mask": "step_0017/left_shoulder_mask.png",
+          "masked_rgb": "step_0017/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 18,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0018/front_raw_rgb.png",
+          "mask": "step_0018/front_mask.png",
+          "masked_rgb": "step_0018/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0018/left_shoulder_raw_rgb.png",
+          "mask": "step_0018/left_shoulder_mask.png",
+          "masked_rgb": "step_0018/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 19,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0019/front_raw_rgb.png",
+          "mask": "step_0019/front_mask.png",
+          "masked_rgb": "step_0019/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0019/left_shoulder_raw_rgb.png",
+          "mask": "step_0019/left_shoulder_mask.png",
+          "masked_rgb": "step_0019/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 20,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0020/front_raw_rgb.png",
+          "mask": "step_0020/front_mask.png",
+          "masked_rgb": "step_0020/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0020/left_shoulder_raw_rgb.png",
+          "mask": "step_0020/left_shoulder_mask.png",
+          "masked_rgb": "step_0020/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 21,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0021/front_raw_rgb.png",
+          "mask": "step_0021/front_mask.png",
+          "masked_rgb": "step_0021/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0021/left_shoulder_raw_rgb.png",
+          "mask": "step_0021/left_shoulder_mask.png",
+          "masked_rgb": "step_0021/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 22,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0022/front_raw_rgb.png",
+          "mask": "step_0022/front_mask.png",
+          "masked_rgb": "step_0022/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0022/left_shoulder_raw_rgb.png",
+          "mask": "step_0022/left_shoulder_mask.png",
+          "masked_rgb": "step_0022/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 23,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0023/front_raw_rgb.png",
+          "mask": "step_0023/front_mask.png",
+          "masked_rgb": "step_0023/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0023/left_shoulder_raw_rgb.png",
+          "mask": "step_0023/left_shoulder_mask.png",
+          "masked_rgb": "step_0023/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 24,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0024/front_raw_rgb.png",
+          "mask": "step_0024/front_mask.png",
+          "masked_rgb": "step_0024/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0024/left_shoulder_raw_rgb.png",
+          "mask": "step_0024/left_shoulder_mask.png",
+          "masked_rgb": "step_0024/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 25,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0025/front_raw_rgb.png",
+          "mask": "step_0025/front_mask.png",
+          "masked_rgb": "step_0025/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0025/left_shoulder_raw_rgb.png",
+          "mask": "step_0025/left_shoulder_mask.png",
+          "masked_rgb": "step_0025/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 26,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0026/front_raw_rgb.png",
+          "mask": "step_0026/front_mask.png",
+          "masked_rgb": "step_0026/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0026/left_shoulder_raw_rgb.png",
+          "mask": "step_0026/left_shoulder_mask.png",
+          "masked_rgb": "step_0026/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 27,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0027/front_raw_rgb.png",
+          "mask": "step_0027/front_mask.png",
+          "masked_rgb": "step_0027/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0027/left_shoulder_raw_rgb.png",
+          "mask": "step_0027/left_shoulder_mask.png",
+          "masked_rgb": "step_0027/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 28,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0028/front_raw_rgb.png",
+          "mask": "step_0028/front_mask.png",
+          "masked_rgb": "step_0028/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0028/left_shoulder_raw_rgb.png",
+          "mask": "step_0028/left_shoulder_mask.png",
+          "masked_rgb": "step_0028/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 29,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0029/front_raw_rgb.png",
+          "mask": "step_0029/front_mask.png",
+          "masked_rgb": "step_0029/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0029/left_shoulder_raw_rgb.png",
+          "mask": "step_0029/left_shoulder_mask.png",
+          "masked_rgb": "step_0029/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 30,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0030/front_raw_rgb.png",
+          "mask": "step_0030/front_mask.png",
+          "masked_rgb": "step_0030/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0030/left_shoulder_raw_rgb.png",
+          "mask": "step_0030/left_shoulder_mask.png",
+          "masked_rgb": "step_0030/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 31,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0031/front_raw_rgb.png",
+          "mask": "step_0031/front_mask.png",
+          "masked_rgb": "step_0031/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0031/left_shoulder_raw_rgb.png",
+          "mask": "step_0031/left_shoulder_mask.png",
+          "masked_rgb": "step_0031/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 32,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0032/front_raw_rgb.png",
+          "mask": "step_0032/front_mask.png",
+          "masked_rgb": "step_0032/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0032/left_shoulder_raw_rgb.png",
+          "mask": "step_0032/left_shoulder_mask.png",
+          "masked_rgb": "step_0032/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 33,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0033/front_raw_rgb.png",
+          "mask": "step_0033/front_mask.png",
+          "masked_rgb": "step_0033/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0033/left_shoulder_raw_rgb.png",
+          "mask": "step_0033/left_shoulder_mask.png",
+          "masked_rgb": "step_0033/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 34,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0034/front_raw_rgb.png",
+          "mask": "step_0034/front_mask.png",
+          "masked_rgb": "step_0034/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0034/left_shoulder_raw_rgb.png",
+          "mask": "step_0034/left_shoulder_mask.png",
+          "masked_rgb": "step_0034/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 35,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0035/front_raw_rgb.png",
+          "mask": "step_0035/front_mask.png",
+          "masked_rgb": "step_0035/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0035/left_shoulder_raw_rgb.png",
+          "mask": "step_0035/left_shoulder_mask.png",
+          "masked_rgb": "step_0035/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 36,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0036/front_raw_rgb.png",
+          "mask": "step_0036/front_mask.png",
+          "masked_rgb": "step_0036/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0036/left_shoulder_raw_rgb.png",
+          "mask": "step_0036/left_shoulder_mask.png",
+          "masked_rgb": "step_0036/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 37,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0037/front_raw_rgb.png",
+          "mask": "step_0037/front_mask.png",
+          "masked_rgb": "step_0037/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0037/left_shoulder_raw_rgb.png",
+          "mask": "step_0037/left_shoulder_mask.png",
+          "masked_rgb": "step_0037/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 38,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0038/front_raw_rgb.png",
+          "mask": "step_0038/front_mask.png",
+          "masked_rgb": "step_0038/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0038/left_shoulder_raw_rgb.png",
+          "mask": "step_0038/left_shoulder_mask.png",
+          "masked_rgb": "step_0038/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 39,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0039/front_raw_rgb.png",
+          "mask": "step_0039/front_mask.png",
+          "masked_rgb": "step_0039/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0039/left_shoulder_raw_rgb.png",
+          "mask": "step_0039/left_shoulder_mask.png",
+          "masked_rgb": "step_0039/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 40,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0040/front_raw_rgb.png",
+          "mask": "step_0040/front_mask.png",
+          "masked_rgb": "step_0040/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0040/left_shoulder_raw_rgb.png",
+          "mask": "step_0040/left_shoulder_mask.png",
+          "masked_rgb": "step_0040/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 41,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0041/front_raw_rgb.png",
+          "mask": "step_0041/front_mask.png",
+          "masked_rgb": "step_0041/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0041/left_shoulder_raw_rgb.png",
+          "mask": "step_0041/left_shoulder_mask.png",
+          "masked_rgb": "step_0041/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 42,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0042/front_raw_rgb.png",
+          "mask": "step_0042/front_mask.png",
+          "masked_rgb": "step_0042/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0042/left_shoulder_raw_rgb.png",
+          "mask": "step_0042/left_shoulder_mask.png",
+          "masked_rgb": "step_0042/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 43,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0043/front_raw_rgb.png",
+          "mask": "step_0043/front_mask.png",
+          "masked_rgb": "step_0043/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0043/left_shoulder_raw_rgb.png",
+          "mask": "step_0043/left_shoulder_mask.png",
+          "masked_rgb": "step_0043/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 44,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0044/front_raw_rgb.png",
+          "mask": "step_0044/front_mask.png",
+          "masked_rgb": "step_0044/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0044/left_shoulder_raw_rgb.png",
+          "mask": "step_0044/left_shoulder_mask.png",
+          "masked_rgb": "step_0044/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 45,
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0045/front_raw_rgb.png",
+          "mask": "step_0045/front_mask.png",
+          "masked_rgb": "step_0045/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0045/left_shoulder_raw_rgb.png",
+          "mask": "step_0045/left_shoulder_mask.png",
+          "masked_rgb": "step_0045/left_shoulder_masked_rgb.png"
+        }
+      }
+    }
+  ]
+}

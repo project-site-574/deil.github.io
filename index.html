@@ -127,9 +127,158 @@
       badge.className = "task-highlight-badge " + current.className;
     }
 
+    function updateSimulationVideos() {
+      var taskSelect = document.getElementById("simulation-menu-tasks");
+      if (!taskSelect || !taskSelect.value) {
+        return;
+      }
+
+      var selectedTask = taskSelect.options[taskSelect.selectedIndex];
+      var availableVideos = 0;
+
+      document.querySelectorAll("video[data-simulation-estimator]").forEach(function(video) {
+        var estimator = video.dataset.simulationEstimator;
+        var filename = selectedTask.getAttribute("data-video-" + estimator.replace(/_/g, "-"));
+        var card = video.closest("[data-simulation-card]");
+        var outcomeBadge = card ? card.querySelector("[data-simulation-outcome]") : null;
+
+        if (!filename) {
+          if (card) {
+            card.style.display = "none";
+          }
+          video.pause();
+          video.removeAttribute("src");
+          video.load();
+          if (outcomeBadge) {
+            outcomeBadge.style.display = "none";
+            outcomeBadge.textContent = "";
+          }
+          return;
+        }
+
+        if (card) {
+          card.style.display = "";
+        }
+        availableVideos += 1;
+
+        var outcomeMatch = filename.match(/_(success|failure)\.mp4$/i);
+        if (outcomeBadge && outcomeMatch) {
+          var outcome = outcomeMatch[1].toLowerCase();
+          outcomeBadge.textContent = outcome.toUpperCase();
+          outcomeBadge.className = "tag is-light simulation-video-outcome " +
+            (outcome === "success" ? "is-success" : "is-danger");
+          outcomeBadge.style.display = "";
+        } else if (outcomeBadge) {
+          outcomeBadge.style.display = "none";
+          outcomeBadge.textContent = "";
+        }
+
+        video.src = "static/videos/dp3_sim/" + taskSelect.value + "/" + filename;
+        video.load();
+        var playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(function() {
+            // Browsers may pause autoplay until the page receives user input.
+          });
+        }
+      });
+
+      var emptyState = document.getElementById("simulation-videos-empty");
+      if (emptyState) {
+        emptyState.style.display = availableVideos === 0 ? "" : "none";
+      }
+    }
+
+    var ROLLOUT_SEQUENCE_IMAGES = [
+      { id: "rollout-front-raw", filename: "front_raw_rgb.png", alt: "Front camera raw RGB" },
+      { id: "rollout-front-mask", filename: "front_mask.png", alt: "Front camera mask" },
+      { id: "rollout-front-masked", filename: "front_masked_rgb.png", alt: "Front camera masked RGB" },
+      { id: "rollout-left-raw", filename: "left_shoulder_raw_rgb.png", alt: "Left camera raw RGB" },
+      { id: "rollout-left-mask", filename: "left_shoulder_mask.png", alt: "Left camera mask" },
+      { id: "rollout-left-masked", filename: "left_shoulder_masked_rgb.png", alt: "Left camera masked RGB" }
+    ];
+
+    function rolloutSequenceImagePath(step, filename) {
+      var stepFolder = "step_" + String(step).padStart(4, "0");
+      return "static/images/rollout_sequence/" + stepFolder + "/" + filename;
+    }
+
+    function updateRolloutSequence(step) {
+      var slider = document.getElementById("rollout-sequence-slider");
+      var stepOutput = document.getElementById("rollout-sequence-step");
+      var previousButton = document.getElementById("rollout-sequence-previous");
+      var nextButton = document.getElementById("rollout-sequence-next");
+      if (!slider || !stepOutput || !previousButton || !nextButton) {
+        return;
+      }
+
+      var minimum = Number(slider.min);
+      var maximum = Number(slider.max);
+      var nextStep = Math.min(maximum, Math.max(minimum, Number(step)));
+
+      slider.value = nextStep;
+      stepOutput.value = nextStep;
+      stepOutput.textContent = nextStep;
+      previousButton.disabled = nextStep === minimum;
+      nextButton.disabled = nextStep === maximum;
+
+      ROLLOUT_SEQUENCE_IMAGES.forEach(function(imageConfig) {
+        var image = document.getElementById(imageConfig.id);
+        if (!image) {
+          return;
+        }
+        image.src = rolloutSequenceImagePath(nextStep, imageConfig.filename);
+        image.alt = imageConfig.alt + " at rollout step " + nextStep;
+      });
+    }
+
+    function changeRolloutSequenceStep(offset) {
+      var slider = document.getElementById("rollout-sequence-slider");
+      if (!slider) {
+        return;
+      }
+      updateRolloutSequence(Number(slider.value) + offset);
+    }
+
+    function initializeRolloutSequence() {
+      var panel = document.getElementById("rollout-sequence-panel");
+      var slider = document.getElementById("rollout-sequence-slider");
+      var previousButton = document.getElementById("rollout-sequence-previous");
+      var nextButton = document.getElementById("rollout-sequence-next");
+      if (!panel || !slider || !previousButton || !nextButton) {
+        return;
+      }
+
+      previousButton.addEventListener("click", function() {
+        changeRolloutSequenceStep(-1);
+      });
+      nextButton.addEventListener("click", function() {
+        changeRolloutSequenceStep(1);
+      });
+      slider.addEventListener("input", function() {
+        updateRolloutSequence(this.value);
+      });
+      panel.addEventListener("keydown", function(event) {
+        if (event.target === slider) {
+          return;
+        }
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          changeRolloutSequenceStep(-1);
+        } else if (event.key === "ArrowRight") {
+          event.preventDefault();
+          changeRolloutSequenceStep(1);
+        }
+      });
+
+      updateRolloutSequence(0);
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
       populateTaskOptions();
       updateTaskHighlight();
+      updateSimulationVideos();
+      initializeRolloutSequence();
     });
 
   </script>
@@ -285,6 +434,207 @@
           <p>
             To select a strong and practical configuration for each depth estimator, we first conduct a preliminary hyperparameter study in simulation. It is carried out in the ICIL paradigm, which is lightweight and allows rapid iteration over perception configurations. Specifically, we evaluate different combinations of the above hyperparameters on 10 manipulation tasks from RLBench and identify a set of <strong>optimised depth estimation configurations</strong> that yield strong performance for each depth estimator. For each task and configuration, we collect 5 demos. Then, we condition each demo as a single context and run Instant Policy for 2 rollouts, recording the average success rate for each setting. After that, we average across 10 tasks to obtain the final results, which is reported in <a href="#appendix-simulation-results">Appendix I</a>.
           </p>
+        </div>
+
+        <h4 class="title is-5">Behaviour Cloning</h4>
+
+        <div class="columns">
+          <div class="column has-text-centered">
+            Simulation task:
+            <div class="select is-small is-rounded">
+              <!--
+                Each option value is a folder under static/videos/dp3_sim.
+                Its data-video-* attributes list the available estimator videos.
+              -->
+              <select id="simulation-menu-tasks" onchange="updateSimulationVideos();">
+                <option
+                  value="00_phone_on_base"
+                  data-video-gt="gt_013_success.mp4"
+                  data-video-pi3="pi3_013_success.mp4"
+                  data-video-vggt="vggt_013_success.mp4"
+                  data-video-moge="moge_013_success.mp4"
+                  data-video-mast3r="mast3r_013_success.mp4"
+                  data-video-map-anything="map_anything_013_success.mp4"
+                  selected>Phone on Base</option>
+                <option
+                  value="01_open_box"
+                  data-video-gt="gt_000_success.mp4"
+                  data-video-pi3="pi3_000_success.mp4"
+                  data-video-vggt="vggt_000_failure.mp4"
+                  data-video-moge="moge_000_failure.mp4"
+                  data-video-mast3r="mast3r_000_failure.mp4"
+                  data-video-map-anything="map_anything_000_failure.mp4">Open Box</option>
+                <option
+                  value="02_close_box"
+                  data-video-gt="gt_000_success.mp4"
+                  data-video-pi3="pi3_000_success.mp4"
+                  data-video-vggt="vggt_000_success.mp4"
+                  data-video-moge="moge_000_failure.mp4"
+                  data-video-mast3r="mast3r_000_success.mp4"
+                  data-video-map-anything="map_anything_000_success.mp4">Close Box</option>
+                <option
+                  value="03_plate_out"
+                  data-video-gt="gt_020_success.mp4"
+                  data-video-pi3="pi3_020_success.mp4"
+                  data-video-vggt="vggt_020_failure.mp4"
+                  data-video-moge="moge_020_success.mp4"
+                  data-video-mast3r="mast3r_020_failure.mp4"
+                  data-video-map-anything="map_anything_020_failure.mp4">Plate Out</option>
+                <option
+                  value="04_basketball"
+                  data-video-gt="gt_000_success.mp4"
+                  data-video-pi3="pi3_000_failure.mp4"
+                  data-video-vggt="vggt_000_success.mp4"
+                  data-video-moge="moge_000_failure.mp4"
+                  data-video-mast3r="mast3r_000_failure.mp4"
+                  data-video-map-anything="map_anything_000_failure.mp4">Basketball</option>
+                <option
+                  value="05_close_microwave"
+                  data-video-gt="gt_000_success.mp4"
+                  data-video-pi3="pi3_000_success.mp4"
+                  data-video-vggt="vggt_000_success.mp4"
+                  data-video-moge="moge_000_success.mp4"
+                  data-video-mast3r="mast3r_000_success.mp4"
+                  data-video-map-anything="map_anything_000_failure.mp4">Close Microwave</option>
+                <option
+                  value="06_toilet_seat_down"
+                  data-video-gt="gt_001_success.mp4"
+                  data-video-pi3="pi3_001_success.mp4"
+                  data-video-vggt="vggt_001_success.mp4"
+                  data-video-moge="moge_001_success.mp4"
+                  data-video-mast3r="mast3r_001_success.mp4"
+                  data-video-map-anything="map_anything_001_failure.mp4">Toilet Seat Down</option>
+                <option
+                  value="07_toilet_seat_up"
+                  data-video-gt="gt_046_success.mp4"
+                  data-video-pi3="pi3_046_success.mp4"
+                  data-video-vggt="vggt_046_success.mp4"
+                  data-video-moge="moge_046_success.mp4"
+                  data-video-mast3r="mast3r_046_success.mp4"
+                  data-video-map-anything="map_anything_046_failure.mp4">Toilet Seat Up</option>
+                <option
+                  value="08_toilet_roll_off"
+                  data-video-gt="gt_003_success.mp4"
+                  data-video-pi3="pi3_003_failure.mp4"
+                  data-video-vggt="vggt_003_failure.mp4"
+                  data-video-moge="moge_003_failure.mp4"
+                  data-video-mast3r="mast3r_003_failure.mp4"
+                  data-video-map-anything="map_anything_003_failure.mp4">Toilet Roll Off</option>
+                <option
+                  value="09_meat_off_grill"
+                  data-video-gt="gt_015_success.mp4"
+                  data-video-pi3="pi3_015_success.mp4"
+                  data-video-vggt="vggt_015_success.mp4"
+                  data-video-moge="moge_015_success.mp4"
+                  data-video-mast3r="mast3r_015_success.mp4"
+                  data-video-map-anything="map_anything_015_success.mp4">Meat Off Grill</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="simulation-videos-empty" class="notification is-light has-text-centered">
+          Rollout videos for this task are not available yet.
+        </div>
+
+        <div class="columns is-multiline simulation-video-grid">
+          <div class="column is-half-tablet is-one-third-desktop has-text-centered" data-simulation-card>
+            <p>
+              <video id="simulation-video-gt" data-simulation-estimator="gt" width="100%" controls autoplay loop muted playsinline></video>
+              <span style="color: #EA4335; font-weight: bold;">Depth camera</span>-based DEIL
+              <span class="tag simulation-video-outcome" data-simulation-outcome></span>
+            </p>
+          </div>
+          <div class="column is-half-tablet is-one-third-desktop has-text-centered" data-simulation-card>
+            <p>
+              <video id="simulation-video-pi3" data-simulation-estimator="pi3" width="100%" controls autoplay loop muted playsinline></video>
+              <span style="color: #34A853; font-weight: bold;">&pi;3</span>-based DEIL
+              <span class="tag simulation-video-outcome" data-simulation-outcome></span>
+            </p>
+          </div>
+          <div class="column is-half-tablet is-one-third-desktop has-text-centered" data-simulation-card>
+            <p>
+              <video id="simulation-video-vggt" data-simulation-estimator="vggt" width="100%" controls autoplay loop muted playsinline></video>
+              <span style="color: #1967D2; font-weight: bold;">VGGT</span>-based DEIL
+              <span class="tag simulation-video-outcome" data-simulation-outcome></span>
+            </p>
+          </div>
+          <div class="column is-half-tablet is-one-third-desktop has-text-centered" data-simulation-card>
+            <p>
+              <video id="simulation-video-moge" data-simulation-estimator="moge" width="100%" controls autoplay loop muted playsinline></video>
+              <span style="color: #7D3C98; font-weight: bold;">MoGe</span>-based DEIL
+              <span class="tag simulation-video-outcome" data-simulation-outcome></span>
+            </p>
+          </div>
+          <div class="column is-half-tablet is-one-third-desktop has-text-centered" data-simulation-card>
+            <p>
+              <video id="simulation-video-mast3r" data-simulation-estimator="mast3r" width="100%" controls autoplay loop muted playsinline></video>
+              <span style="color: #00897B; font-weight: bold;">MASt3R</span>-based DEIL
+              <span class="tag simulation-video-outcome" data-simulation-outcome></span>
+            </p>
+          </div>
+          <div class="column is-half-tablet is-one-third-desktop has-text-centered" data-simulation-card>
+            <p>
+              <video id="simulation-video-map-anything" data-simulation-estimator="map_anything" width="100%" controls autoplay loop muted playsinline></video>
+              <span style="color: #B77900; font-weight: bold;">MapAnything</span>-based DEIL
+              <span class="tag simulation-video-outcome" data-simulation-outcome></span>
+            </p>
+          </div>
+        </div>
+
+        <div id="rollout-sequence-panel" class="rollout-sequence-panel" tabindex="0" aria-label="Interactive behaviour cloning rollout sequence">
+          <div class="has-text-centered">
+            <h5 class="title is-5 rollout-sequence-title">Example Rollout Sequence</h5>
+            <p class="rollout-sequence-description">
+              Move through the 46-step sequence using the controls, slider, or left and right arrow keys.
+            </p>
+          </div>
+
+          <div class="rollout-sequence-controls">
+            <button id="rollout-sequence-previous" class="button is-small is-light" type="button" aria-label="Show previous rollout step">
+              <span aria-hidden="true">&larr;</span>
+              <span>Previous</span>
+            </button>
+            <span class="rollout-sequence-step-label">
+              Step <output id="rollout-sequence-step" for="rollout-sequence-slider" aria-live="polite">0</output> / 45
+            </span>
+            <button id="rollout-sequence-next" class="button is-small is-light" type="button" aria-label="Show next rollout step">
+              <span>Next</span>
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+          </div>
+
+          <div class="rollout-sequence-slider-row">
+            <label for="rollout-sequence-slider">Sequence step</label>
+            <input id="rollout-sequence-slider" class="slider is-fullwidth is-info" type="range" min="0" max="45" value="0" step="1">
+          </div>
+
+          <div class="rollout-sequence-viewport">
+            <table class="rollout-sequence-table">
+              <thead>
+                <tr>
+                  <th scope="col">Camera</th>
+                  <th scope="col">Raw RGB</th>
+                  <th scope="col">Mask</th>
+                  <th scope="col">Masked RGB</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><span>Front</span><small>camera</small></th>
+                  <td><img id="rollout-front-raw" src="./static/images/rollout_sequence/step_0000/front_raw_rgb.png" alt="Front camera raw RGB at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
+                  <td><img id="rollout-front-mask" src="./static/images/rollout_sequence/step_0000/front_mask.png" alt="Front camera mask at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
+                  <td><img id="rollout-front-masked" src="./static/images/rollout_sequence/step_0000/front_masked_rgb.png" alt="Front camera masked RGB at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
+                </tr>
+                <tr>
+                  <th scope="row"><span>Left</span><small>camera</small></th>
+                  <td><img id="rollout-left-raw" src="./static/images/rollout_sequence/step_0000/left_shoulder_raw_rgb.png" alt="Left camera raw RGB at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
+                  <td><img id="rollout-left-mask" src="./static/images/rollout_sequence/step_0000/left_shoulder_mask.png" alt="Left camera mask at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
+                  <td><img id="rollout-left-masked" src="./static/images/rollout_sequence/step_0000/left_shoulder_masked_rgb.png" alt="Left camera masked RGB at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
         <!--/ Simulation Results. -->
 
