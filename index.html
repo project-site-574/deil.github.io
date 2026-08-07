@@ -198,6 +198,459 @@
       { id: "rollout-left-masked", filename: "left_shoulder_masked_rgb.png", alt: "Left camera masked RGB" }
     ];
 
+    var ROLLOUT_POINT_CLOUDS = [
+      { canvasId: "rollout-pi3-point-cloud", filename: "estimated_point_cloud.ply" },
+      { canvasId: "rollout-gt-point-cloud", filename: "ground_truth_point_cloud.ply" }
+    ];
+    var ROLLOUT_POINT_CLOUD_CACHE_LIMIT = 12;
+    var rolloutPointCloudCache = new Map();
+    var rolloutPointCloudViewers = [];
+    var rolloutSequencePrefetchTimer = null;
+
+    function plyPropertySize(type) {
+      var sizes = {
+        char: 1,
+        int8: 1,
+        uchar: 1,
+        uint8: 1,
+        short: 2,
+        int16: 2,
+        ushort: 2,
+        uint16: 2,
+        int: 4,
+        int32: 4,
+        uint: 4,
+        uint32: 4,
+        float: 4,
+        float32: 4,
+        double: 8,
+        float64: 8
+      };
+      return sizes[type] || 0;
+    }
+
+    function readPlyValue(view, offset, type) {
+      switch (type) {
+        case "char":
+        case "int8": return view.getInt8(offset);
+        case "uchar":
+        case "uint8": return view.getUint8(offset);
+        case "short":
+        case "int16": return view.getInt16(offset, true);
+        case "ushort":
+        case "uint16": return view.getUint16(offset, true);
+        case "int":
+        case "int32": return view.getInt32(offset, true);
+        case "uint":
+        case "uint32": return view.getUint32(offset, true);
+        case "float":
+        case "float32": return view.getFloat32(offset, true);
+        case "double":
+        case "float64": return view.getFloat64(offset, true);
+        default: throw new Error("Unsupported PLY property type: " + type);
+      }
+    }
+
+    function parseBinaryPointCloudPly(arrayBuffer) {
+      var bytes = new Uint8Array(arrayBuffer);
+      var headerMarker = "end_header";
+      var headerEnd = -1;
+
+      for (var index = 0; index <= bytes.length - headerMarker.length; index += 1) {
+        var matches = true;
+        for (var markerIndex = 0; markerIndex < headerMarker.length; markerIndex += 1) {
+          if (bytes[index + markerIndex] !== headerMarker.charCodeAt(markerIndex)) {
+            matches = false;
+            break;
+          }
+        }
+        if (matches) {
+          headerEnd = index + headerMarker.length;
+          while (headerEnd < bytes.length && bytes[headerEnd] !== 10) {
+            headerEnd += 1;
+          }
+          headerEnd += 1;
+          break;
+        }
+      }
+
+      if (headerEnd < 0) {
+        throw new Error("PLY header terminator not found.");
+      }
+
+      var header = new TextDecoder("ascii").decode(bytes.slice(0, headerEnd));
+      if (header.indexOf("format binary_little_endian 1.0") === -1) {
+        throw new Error("Only binary little-endian PLY files are supported.");
+      }
+
+      var vertexCount = 0;
+      var vertexProperties = [];
+      var readingVertices = false;
+      header.split(/\r?\n/).forEach(function(line) {
+        var parts = line.trim().split(/\s+/);
+        if (parts[0] === "element") {
+          readingVertices = parts[1] === "vertex";
+          if (readingVertices) {
+            vertexCount = Number(parts[2]);
+          }
+        } else if (readingVertices && parts[0] === "property") {
+          if (parts[1] === "list") {
+            throw new Error("List properties are not supported in point-cloud vertices.");
+          }
+          vertexProperties.push({ type: parts[1], name: parts[2] });
+        }
+      });
+
+      if (!vertexCount || !vertexProperties.length) {
+        throw new Error("PLY vertex schema is missing.");
+      }
+
+      var stride = 0;
+      var properties = {};
+      vertexProperties.forEach(function(property) {
+        var size = plyPropertySize(property.type);
+        if (!size) {
+          throw new Error("Unsupported PLY property type: " + property.type);
+        }
+        properties[property.name] = { type: property.type, offset: stride };
+        stride += size;
+      });
+
+      ["x", "y", "z", "red", "green", "blue"].forEach(function(name) {
+        if (!properties[name]) {
+          throw new Error("PLY is missing the " + name + " property.");
+        }
+      });
+
+      if (headerEnd + vertexCount * stride > arrayBuffer.byteLength) {
+        throw new Error("PLY vertex data is truncated.");
+      }
+
+      var view = new DataView(arrayBuffer);
+      var rawPositions = new Float32Array(vertexCount * 3);
+      var colors = new Uint8Array(vertexCount * 3);
+      var minimum = [Infinity, Infinity, Infinity];
+      var maximum = [-Infinity, -Infinity, -Infinity];
+
+      for (var vertexIndex = 0; vertexIndex < vertexCount; vertexIndex += 1) {
+        var vertexOffset = headerEnd + vertexIndex * stride;
+        var positionOffset = vertexIndex * 3;
+        var coordinates = ["x", "y", "z"].map(function(name) {
+          var property = properties[name];
+          return readPlyValue(view, vertexOffset + property.offset, property.type);
+        });
+
+        coordinates.forEach(function(value, axis) {
+          if (!Number.isFinite(value)) {
+            throw new Error("PLY contains a non-finite coordinate.");
+          }
+          rawPositions[positionOffset + axis] = value;
+          minimum[axis] = Math.min(minimum[axis], value);
+          maximum[axis] = Math.max(maximum[axis], value);
+        });
+
+        ["red", "green", "blue"].forEach(function(name, channel) {
+          var property = properties[name];
+          colors[positionOffset + channel] = readPlyValue(view, vertexOffset + property.offset, property.type);
+        });
+      }
+
+      var center = minimum.map(function(value, axis) {
+        return (value + maximum[axis]) / 2;
+      });
+      var largestSpan = Math.max(
+        maximum[0] - minimum[0],
+        maximum[1] - minimum[1],
+        maximum[2] - minimum[2]
+      ) || 1;
+      var positions = new Float32Array(rawPositions.length);
+
+      for (var positionIndex = 0; positionIndex < rawPositions.length; positionIndex += 3) {
+        positions[positionIndex] = (rawPositions[positionIndex] - center[0]) / largestSpan;
+        positions[positionIndex + 1] = (rawPositions[positionIndex + 1] - center[1]) / largestSpan;
+        positions[positionIndex + 2] = (rawPositions[positionIndex + 2] - center[2]) / largestSpan;
+      }
+
+      return { positions: positions, colors: colors, count: vertexCount };
+    }
+
+    function loadRolloutPointCloud(url) {
+      if (rolloutPointCloudCache.has(url)) {
+        var cachedRequest = rolloutPointCloudCache.get(url);
+        rolloutPointCloudCache.delete(url);
+        rolloutPointCloudCache.set(url, cachedRequest);
+        return cachedRequest;
+      }
+
+      var request = fetch(url)
+        .then(function(response) {
+          if (!response.ok) {
+            throw new Error("Could not load " + url);
+          }
+          return response.arrayBuffer();
+        })
+        .then(parseBinaryPointCloudPly);
+
+      rolloutPointCloudCache.set(url, request);
+      request.catch(function() {
+        if (rolloutPointCloudCache.get(url) === request) {
+          rolloutPointCloudCache.delete(url);
+        }
+      });
+
+      while (rolloutPointCloudCache.size > ROLLOUT_POINT_CLOUD_CACHE_LIMIT) {
+        rolloutPointCloudCache.delete(rolloutPointCloudCache.keys().next().value);
+      }
+      return request;
+    }
+
+    function syncRolloutPointCloudView(sourceViewer) {
+      rolloutPointCloudViewers.forEach(function(viewer) {
+        if (viewer !== sourceViewer) {
+          viewer.yaw = sourceViewer.yaw;
+          viewer.pitch = sourceViewer.pitch;
+          viewer.zoom = sourceViewer.zoom;
+        }
+        viewer.requestRender();
+      });
+    }
+
+    function RolloutPointCloudViewer(canvas) {
+      this.canvas = canvas;
+      this.context = canvas.getContext("2d");
+      this.status = canvas.parentElement.querySelector("[data-point-cloud-status]");
+      this.data = null;
+      this.loadToken = 0;
+      this.yaw = 0;
+      this.pitch = 0;
+      this.zoom = 0.92;
+      this.dragging = false;
+      this.lastPointerX = 0;
+      this.lastPointerY = 0;
+      this.renderRequested = false;
+      this.attachInteractions();
+      this.resize();
+
+      var viewer = this;
+      if (typeof ResizeObserver !== "undefined") {
+        this.resizeObserver = new ResizeObserver(function() {
+          viewer.resize();
+        });
+        this.resizeObserver.observe(canvas);
+      } else {
+        window.addEventListener("resize", function() {
+          viewer.resize();
+        });
+      }
+    }
+
+    RolloutPointCloudViewer.prototype.attachInteractions = function() {
+      var viewer = this;
+      this.canvas.addEventListener("pointerdown", function(event) {
+        viewer.dragging = true;
+        viewer.lastPointerX = event.clientX;
+        viewer.lastPointerY = event.clientY;
+        viewer.canvas.setPointerCapture(event.pointerId);
+      });
+      this.canvas.addEventListener("pointermove", function(event) {
+        if (!viewer.dragging) {
+          return;
+        }
+        viewer.yaw += (event.clientX - viewer.lastPointerX) * 0.01;
+        viewer.pitch = Math.max(-1.45, Math.min(1.45,
+          viewer.pitch + (event.clientY - viewer.lastPointerY) * 0.01));
+        viewer.lastPointerX = event.clientX;
+        viewer.lastPointerY = event.clientY;
+        syncRolloutPointCloudView(viewer);
+      });
+      ["pointerup", "pointercancel", "lostpointercapture"].forEach(function(eventName) {
+        viewer.canvas.addEventListener(eventName, function() {
+          viewer.dragging = false;
+        });
+      });
+      this.canvas.addEventListener("wheel", function(event) {
+        event.preventDefault();
+        viewer.zoom = Math.max(0.4, Math.min(4,
+          viewer.zoom * Math.exp(-event.deltaY * 0.001)));
+        syncRolloutPointCloudView(viewer);
+      }, { passive: false });
+      this.canvas.addEventListener("dblclick", function() {
+        viewer.yaw = 0;
+        viewer.pitch = 0;
+        viewer.zoom = 0.92;
+        syncRolloutPointCloudView(viewer);
+      });
+      this.canvas.addEventListener("keydown", function(event) {
+        var handled = true;
+        if (event.key === "ArrowLeft") {
+          viewer.yaw -= 0.12;
+        } else if (event.key === "ArrowRight") {
+          viewer.yaw += 0.12;
+        } else if (event.key === "ArrowUp") {
+          viewer.pitch = Math.max(-1.45, viewer.pitch - 0.12);
+        } else if (event.key === "ArrowDown") {
+          viewer.pitch = Math.min(1.45, viewer.pitch + 0.12);
+        } else if (event.key === "+" || event.key === "=") {
+          viewer.zoom = Math.min(4, viewer.zoom * 1.12);
+        } else if (event.key === "-" || event.key === "_") {
+          viewer.zoom = Math.max(0.4, viewer.zoom / 1.12);
+        } else {
+          handled = false;
+        }
+        if (handled) {
+          event.preventDefault();
+          event.stopPropagation();
+          syncRolloutPointCloudView(viewer);
+        }
+      });
+    };
+
+    RolloutPointCloudViewer.prototype.resize = function() {
+      var bounds = this.canvas.getBoundingClientRect();
+      var pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      var width = Math.max(1, Math.round(bounds.width * pixelRatio));
+      var height = Math.max(1, Math.round(bounds.height * pixelRatio));
+      if (this.canvas.width !== width || this.canvas.height !== height) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+      }
+      this.requestRender();
+    };
+
+    RolloutPointCloudViewer.prototype.requestRender = function() {
+      if (this.renderRequested) {
+        return;
+      }
+      this.renderRequested = true;
+      var viewer = this;
+      requestAnimationFrame(function() {
+        viewer.renderRequested = false;
+        viewer.render();
+      });
+    };
+
+    RolloutPointCloudViewer.prototype.render = function() {
+      var context = this.context;
+      var width = this.canvas.width;
+      var height = this.canvas.height;
+      context.fillStyle = "#08111f";
+      context.fillRect(0, 0, width, height);
+      if (!this.data) {
+        return;
+      }
+
+      var cosineYaw = Math.cos(this.yaw);
+      var sineYaw = Math.sin(this.yaw);
+      var cosinePitch = Math.cos(this.pitch);
+      var sinePitch = Math.sin(this.pitch);
+      var scale = Math.min(width, height) * 0.82 * this.zoom;
+      var projected = [];
+
+      for (var index = 0; index < this.data.count; index += 1) {
+        var offset = index * 3;
+        var x = this.data.positions[offset];
+        var y = this.data.positions[offset + 1];
+        var z = this.data.positions[offset + 2];
+        var rotatedX = cosineYaw * x + sineYaw * z;
+        var yawDepth = -sineYaw * x + cosineYaw * z;
+        var rotatedY = cosinePitch * y - sinePitch * yawDepth;
+        var depth = sinePitch * y + cosinePitch * yawDepth;
+        var perspective = 2.7 / (2.7 - depth);
+
+        projected.push({
+          x: width / 2 + rotatedX * scale * perspective,
+          y: height / 2 - rotatedY * scale * perspective,
+          depth: depth,
+          perspective: perspective,
+          red: this.data.colors[offset],
+          green: this.data.colors[offset + 1],
+          blue: this.data.colors[offset + 2]
+        });
+      }
+
+      projected.sort(function(first, second) {
+        return first.depth - second.depth;
+      });
+      var basePointSize = Math.max(1.5, Math.min(width, height) / 130);
+      projected.forEach(function(point) {
+        var pointSize = basePointSize * point.perspective;
+        context.fillStyle = "rgb(" + point.red + "," + point.green + "," + point.blue + ")";
+        context.fillRect(
+          point.x - pointSize / 2,
+          point.y - pointSize / 2,
+          pointSize,
+          pointSize
+        );
+      });
+    };
+
+    RolloutPointCloudViewer.prototype.load = function(url) {
+      this.loadToken += 1;
+      var token = this.loadToken;
+      this.data = null;
+      this.status.hidden = false;
+      this.status.textContent = "Loading point cloud…";
+      this.status.classList.remove("is-error");
+      this.requestRender();
+
+      var viewer = this;
+      loadRolloutPointCloud(url)
+        .then(function(data) {
+          if (token !== viewer.loadToken) {
+            return;
+          }
+          viewer.data = data;
+          viewer.status.hidden = true;
+          viewer.requestRender();
+        })
+        .catch(function(error) {
+          if (token !== viewer.loadToken) {
+            return;
+          }
+          viewer.status.hidden = false;
+          viewer.status.textContent = "Point cloud unavailable";
+          viewer.status.classList.add("is-error");
+          console.error(error);
+        });
+    };
+
+    function updateRolloutPointClouds(step) {
+      rolloutPointCloudViewers.forEach(function(viewer, index) {
+        var config = ROLLOUT_POINT_CLOUDS[index];
+        viewer.load(rolloutSequenceImagePath(step, config.filename));
+      });
+    }
+
+    function prefetchRolloutSequenceStep(step) {
+      if (step < 0 || step > 45) {
+        return;
+      }
+      ROLLOUT_SEQUENCE_IMAGES.forEach(function(imageConfig) {
+        var image = new Image();
+        image.src = rolloutSequenceImagePath(step, imageConfig.filename);
+      });
+      ROLLOUT_POINT_CLOUDS.forEach(function(pointCloudConfig) {
+        loadRolloutPointCloud(rolloutSequenceImagePath(step, pointCloudConfig.filename));
+      });
+    }
+
+    function scheduleRolloutSequencePrefetch(step) {
+      window.clearTimeout(rolloutSequencePrefetchTimer);
+      rolloutSequencePrefetchTimer = window.setTimeout(function() {
+        prefetchRolloutSequenceStep(step - 1);
+        prefetchRolloutSequenceStep(step + 1);
+      }, 250);
+    }
+
+    function initializeRolloutPointClouds() {
+      rolloutPointCloudViewers = ROLLOUT_POINT_CLOUDS.map(function(config) {
+        var canvas = document.getElementById(config.canvasId);
+        return canvas ? new RolloutPointCloudViewer(canvas) : null;
+      }).filter(function(viewer) {
+        return viewer !== null;
+      });
+    }
+
     function rolloutSequenceImagePath(step, filename) {
       var stepFolder = "step_" + String(step).padStart(4, "0");
       return "static/images/rollout_sequence/" + stepFolder + "/" + filename;
@@ -230,6 +683,8 @@
         image.src = rolloutSequenceImagePath(nextStep, imageConfig.filename);
         image.alt = imageConfig.alt + " at rollout step " + nextStep;
       });
+      updateRolloutPointClouds(nextStep);
+      scheduleRolloutSequencePrefetch(nextStep);
     }
 
     function changeRolloutSequenceStep(offset) {
@@ -271,6 +726,7 @@
         }
       });
 
+      initializeRolloutPointClouds();
       updateRolloutSequence(0);
     }
 
@@ -368,13 +824,11 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Point cloud–based robot policy learning has emerged as a powerful approach for robotic manipulation, as it enables policies to leverage 3D geometric structure directly from observations. In such pipelines, depth image acquisition plays a critical role in point cloud construction. However, raw depth from depth cameras is often noisy, sensitive to transparent, reflective, and repetitive surfaces, and limited by a minimum sensing distance. 
-          </p>
-          <p>
+            Point cloud–based robot policy learning has emerged as a powerful approach for robotic manipulation by enabling policies to directly exploit 3D geometric structure. In such pipelines, depth image acquisition plays a critical role in point cloud construction. However, raw depth from depth cameras is often noisy, sensitive to transparent, reflective, and repetitive surfaces, and limited by a minimum sensing distance. 
             Recent advances in learned depth estimation offer a promising alternative: modern monocular, stereo, and multi-view approaches have achieved impressive performance in vision benchmarks. However, robotics still lacks a systematic understanding of how these advances translate to end-to-end policy learning and execution.
           </p>
           <p>
-            In this work, based on our introduced <span class="dnerf">Depth-Estimated Imitation Learning <strong>(DEIL)</strong></span> general framework, we present the first systematic study of how modern depth estimation impacts point cloud–based imitation learning across two paradigms: In-Context Imitation Learning and Behaviour Cloning. We evaluate depth camera sensing alongside learned monocular, stereo, and multi-view depth estimation pipelines through their downstream effect on robot performance. Through 160 rollouts in real-world and 46900 rollouts in simulation, our results show that strong multi-view depth estimators can substantially improve real-world manipulation in challenging settings where depth cameras are unreliable, but they are not yet a drop-in replacement for depth cameras overall, especially for behaviour cloning.
+            In this work, based on our introduced Depth-Estimated Imitation Learning (DEIL) general framework, we present the first systematic study of how modern depth estimation impacts point cloud–based imitation learning across two paradigms: In-Context Imitation Learning (ICIL) and Behaviour Cloning (BC). Within each paradigm, we keep the point cloud reconstruction procedure, policy backbone, and evaluation protocol fixed across depth sources. Through <strong>71,800</strong> simulated and <strong>160</strong> real-world rollouts, several depth estimators achieve reasonable downstream performance in simulation, although a consistent gap to GT depth remains. In real-world ICIL, the best-performing multi-view estimator is competitive with the tested RGB-D cameras on normal tasks and achieves higher success when depth sensing is unreliable. Our failure mode analysis further shows that reconstructed geometric quality generally correlates with policy success, with flying points being particularly harmful to BC. These findings highlight the need for improved geometric awareness and stability before learned depth estimation can be broadly deployed in robot manipulation.
           </p>
         </div>
       </div>
@@ -428,16 +882,32 @@
       <div class="column is-full-width">
         <h2 class="title is-3">Results</h2>
 
-        <!-- Simulation Results. -->
-        <h3 class="title is-4">Simulation Results</h3>
+        <!-- Low-Budget Hyperparameter Screening. -->
+        <h4 class="title is-4">1. Low-Budget Hyperparameter Screening</h4>
         <div class="content has-text-justified">
           <p>
-            To select a strong and practical configuration for each depth estimator, we first conduct a preliminary hyperparameter study in simulation. It is carried out in the ICIL paradigm, which is lightweight and allows rapid iteration over perception configurations. Specifically, we evaluate different combinations of the above hyperparameters on 10 manipulation tasks from RLBench and identify a set of <strong>optimised depth estimation configurations</strong> that yield strong performance for each depth estimator. For each task and configuration, we collect 5 demos. Then, we condition each demo as a single context and run Instant Policy for 2 rollouts, recording the average success rate for each setting. After that, we average across 10 tasks to obtain the final results, which is reported in <a href="#appendix-simulation-results">Appendix I</a>.
+            Exhaustively evaluating all estimators and configurations would require 216,000 rollouts, which is computationally expensive and exceeds our evaluation budget. We therefore conduct low-budget screening in simulation under the lightweight ICIL protocol. 
+            
+            Specifically, we evaluate different combinations of the hyperparameters on 10 manipulation tasks from RLBench. For each configuration-task pair, we use five demonstrations as separate contexts and perform two Instant Policy rollouts per demonstration, yielding 10 rollouts. We average the success rates across tasks to obtain the overall screening score. Complete results are reported in <a href="#appendix-simulation-results">Appendix I</a>.
           </p>
         </div>
 
-        <h4 class="title is-5">Behaviour Cloning</h4>
+        <!-- Simulation Results. -->
+        <h3 class="title is-4">2. Simulation Results</h3>
+        
+        <h4 class="title is-5">2.1 In-Context Imitation Learning</h4>
+        <div class="content has-text-justified">
+          <p>
+            For the main experiments under ICIL, we collect 20 demonstrations per task. Conditioning each demonstration as a single context, we run Instant Policy  for 10 rollouts based on point clouds constructed through each depth variation. We report the average success rate across demonstrations, rollouts and tasks as the final performance metric. Note that for the depth camera baseline, we also report the all-camera setting (5 cameras), which is the same as in the original paper for fair comparison. Please refer to TABLE I in our paper for details.
+          </p>
+        
+        <h4 class="title is-5">2.2 Behaviour Cloning</h4>
+        <div class="content has-text-justified">
+          <p>
+            In the BC paradigm, we use a <em>front / side</em> camera setup at 256 resolution, and apply no image masking for all depth variations. For each task, we collect 100 demonstrations and generate depth images using each depth variant. During training, we evaluate up to seven checkpoints at 20-epoch intervals, each using 50 rollouts with the same set of seeds across checkpoints and depth variants, and select the best-performing checkpoint. Average success rates across tasks are reported in Table II in our paper.
+          </p>
 
+        <h4 class="title is-5">2.3 Behaviour Cloning Videos</h4>
         <div class="columns">
           <div class="column has-text-centered">
             Simulation task:
@@ -609,37 +1079,60 @@
             <input id="rollout-sequence-slider" class="slider is-fullwidth is-info" type="range" min="0" max="45" value="0" step="1">
           </div>
 
-          <div class="rollout-sequence-viewport">
-            <table class="rollout-sequence-table">
-              <thead>
-                <tr>
-                  <th scope="col">Camera</th>
-                  <th scope="col">Raw RGB</th>
-                  <th scope="col">Mask</th>
-                  <th scope="col">Masked RGB</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row"><span>Front</span><small>camera</small></th>
-                  <td><img id="rollout-front-raw" src="./static/images/rollout_sequence/step_0000/front_raw_rgb.png" alt="Front camera raw RGB at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
-                  <td><img id="rollout-front-mask" src="./static/images/rollout_sequence/step_0000/front_mask.png" alt="Front camera mask at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
-                  <td><img id="rollout-front-masked" src="./static/images/rollout_sequence/step_0000/front_masked_rgb.png" alt="Front camera masked RGB at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
-                </tr>
-                <tr>
-                  <th scope="row"><span>Left</span><small>camera</small></th>
-                  <td><img id="rollout-left-raw" src="./static/images/rollout_sequence/step_0000/left_shoulder_raw_rgb.png" alt="Left camera raw RGB at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
-                  <td><img id="rollout-left-mask" src="./static/images/rollout_sequence/step_0000/left_shoulder_mask.png" alt="Left camera mask at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
-                  <td><img id="rollout-left-masked" src="./static/images/rollout_sequence/step_0000/left_shoulder_masked_rgb.png" alt="Left camera masked RGB at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="rollout-sequence-comparison">
+            <div class="rollout-sequence-viewport rollout-sequence-images">
+              <table class="rollout-sequence-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Camera</th>
+                    <th scope="col">Raw RGB</th>
+                    <th scope="col">Mask</th>
+                    <th scope="col">Masked RGB</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row"><span>Front</span><small>camera</small></th>
+                    <td><img id="rollout-front-raw" src="./static/images/rollout_sequence/step_0000/front_raw_rgb.png" alt="Front camera raw RGB at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
+                    <td><img id="rollout-front-mask" src="./static/images/rollout_sequence/step_0000/front_mask.png" alt="Front camera mask at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
+                    <td><img id="rollout-front-masked" src="./static/images/rollout_sequence/step_0000/front_masked_rgb.png" alt="Front camera masked RGB at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><span>Left</span><small>camera</small></th>
+                    <td><img id="rollout-left-raw" src="./static/images/rollout_sequence/step_0000/left_shoulder_raw_rgb.png" alt="Left camera raw RGB at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
+                    <td><img id="rollout-left-mask" src="./static/images/rollout_sequence/step_0000/left_shoulder_mask.png" alt="Left camera mask at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
+                    <td><img id="rollout-left-masked" src="./static/images/rollout_sequence/step_0000/left_shoulder_masked_rgb.png" alt="Left camera masked RGB at rollout step 0" loading="lazy" decoding="async" draggable="false"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="rollout-sequence-divider" role="separator" aria-orientation="vertical"></div>
+
+            <div class="rollout-point-cloud-grid" aria-label="Point clouds generated from both camera views">
+              <section class="rollout-point-cloud-card">
+                <h6 class="rollout-point-cloud-title">&pi;<sup>3</sup></h6>
+                <div class="rollout-point-cloud-viewer">
+                  <canvas id="rollout-pi3-point-cloud" tabindex="0" aria-label="Interactive pi cubed point cloud. Drag to rotate and scroll to zoom."></canvas>
+                  <span class="rollout-point-cloud-status" data-point-cloud-status>Loading point cloud&hellip;</span>
+                  <span class="rollout-point-cloud-help" aria-hidden="true">Drag to rotate &middot; Scroll to zoom &middot; Double-click to reset</span>
+                </div>
+              </section>
+              <section class="rollout-point-cloud-card">
+                <h6 class="rollout-point-cloud-title">GT</h6>
+                <div class="rollout-point-cloud-viewer">
+                  <canvas id="rollout-gt-point-cloud" tabindex="0" aria-label="Interactive ground-truth point cloud. Drag to rotate and scroll to zoom."></canvas>
+                  <span class="rollout-point-cloud-status" data-point-cloud-status>Loading point cloud&hellip;</span>
+                  <span class="rollout-point-cloud-help" aria-hidden="true">Drag to rotate &middot; Scroll to zoom &middot; Double-click to reset</span>
+                </div>
+              </section>
+            </div>
           </div>
         </div>
         <!--/ Simulation Results. -->
 
         <!-- Real-World Results. -->
-        <h3 class="title is-4">Real-World Results</h3>
+        <h3 class="title is-4">2. Real-World Results</h3>
         <div class="content has-text-justified">
           <p>
             We evaluate the performance of different depth estimation methods on a suite of real-world manipulation tasks under challenging visual conditions, including transparent, reflective, and textureless objects. Our results show that depth estimation approaches could narrow the gap to depth images from depth cameras. Moreover, it delivers significant gains in real-world manipulation tasks under challenging visual conditions.
@@ -647,7 +1140,7 @@
         </div>
         <!--/ Real-World Results. -->
 
-        <h4 class="title is-5">In-Context Imitation Learning</h4>
+        <h4 class="title is-5">2.1 In-Context Imitation Learning</h4>
 
         <div class="columns">
           <div class="column has-text-centered">
@@ -710,7 +1203,7 @@
     <div class="columns is-centered">
       <div class="column is-full-width">
         <h2 class="title is-3">Appendix</h2>
-        <h3 class="title is-4">I. Preliminary Hyperparameter Selection Results</h3>
+        <h3 class="title is-4">I. Low-Budget Hyperparameter Screening Results</h3>
         <div id="simulation-results-status" class="notification is-light">
           Loading simulation results from Excel...
         </div>

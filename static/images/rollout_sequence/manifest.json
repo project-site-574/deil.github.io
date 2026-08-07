@@ -1,11 +1,22 @@
 {
   "schema_version": 1,
-  "frame_count": 46,
+  "frame_count": 52,
+  "image_size": [
+    128,
+    128
+  ],
   "step_definition": "step 0 is the reset observation; later steps follow each simulator action",
   "mask_encoding": "binary PNG: foreground=255, background=0",
+  "point_cloud_format": "binary_little_endian PLY with XYZ float32 and RGB uint8",
+  "point_cloud_frame": "eef",
+  "point_cloud_units": "meters",
   "steps": [
     {
       "step_index": 0,
+      "point_clouds": {
+        "estimated": "step_0000/estimated_point_cloud.ply",
+        "ground_truth": "step_0000/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0000/front_raw_rgb.png",
@@ -21,6 +32,10 @@
     },
     {
       "step_index": 1,
+      "point_clouds": {
+        "estimated": "step_0001/estimated_point_cloud.ply",
+        "ground_truth": "step_0001/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0001/front_raw_rgb.png",
@@ -36,6 +51,10 @@
     },
     {
       "step_index": 2,
+      "point_clouds": {
+        "estimated": "step_0002/estimated_point_cloud.ply",
+        "ground_truth": "step_0002/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0002/front_raw_rgb.png",
@@ -51,6 +70,10 @@
     },
     {
       "step_index": 3,
+      "point_clouds": {
+        "estimated": "step_0003/estimated_point_cloud.ply",
+        "ground_truth": "step_0003/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0003/front_raw_rgb.png",
@@ -66,6 +89,10 @@
     },
     {
       "step_index": 4,
+      "point_clouds": {
+        "estimated": "step_0004/estimated_point_cloud.ply",
+        "ground_truth": "step_0004/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0004/front_raw_rgb.png",
@@ -81,6 +108,10 @@
     },
     {
       "step_index": 5,
+      "point_clouds": {
+        "estimated": "step_0005/estimated_point_cloud.ply",
+        "ground_truth": "step_0005/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0005/front_raw_rgb.png",
@@ -96,6 +127,10 @@
     },
     {
       "step_index": 6,
+      "point_clouds": {
+        "estimated": "step_0006/estimated_point_cloud.ply",
+        "ground_truth": "step_0006/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0006/front_raw_rgb.png",
@@ -111,6 +146,10 @@
     },
     {
       "step_index": 7,
+      "point_clouds": {
+        "estimated": "step_0007/estimated_point_cloud.ply",
+        "ground_truth": "step_0007/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0007/front_raw_rgb.png",
@@ -126,6 +165,10 @@
     },
     {
       "step_index": 8,
+      "point_clouds": {
+        "estimated": "step_0008/estimated_point_cloud.ply",
+        "ground_truth": "step_0008/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0008/front_raw_rgb.png",
@@ -141,6 +184,10 @@
     },
     {
       "step_index": 9,
+      "point_clouds": {
+        "estimated": "step_0009/estimated_point_cloud.ply",
+        "ground_truth": "step_0009/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0009/front_raw_rgb.png",
@@ -156,6 +203,10 @@
     },
     {
       "step_index": 10,
+      "point_clouds": {
+        "estimated": "step_0010/estimated_point_cloud.ply",
+        "ground_truth": "step_0010/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0010/front_raw_rgb.png",
@@ -171,6 +222,10 @@
     },
     {
       "step_index": 11,
+      "point_clouds": {
+        "estimated": "step_0011/estimated_point_cloud.ply",
+        "ground_truth": "step_0011/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0011/front_raw_rgb.png",
@@ -186,6 +241,10 @@
     },
     {
       "step_index": 12,
+      "point_clouds": {
+        "estimated": "step_0012/estimated_point_cloud.ply",
+        "ground_truth": "step_0012/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0012/front_raw_rgb.png",
@@ -201,6 +260,10 @@
     },
     {
       "step_index": 13,
+      "point_clouds": {
+        "estimated": "step_0013/estimated_point_cloud.ply",
+        "ground_truth": "step_0013/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0013/front_raw_rgb.png",
@@ -216,6 +279,10 @@
     },
     {
       "step_index": 14,
+      "point_clouds": {
+        "estimated": "step_0014/estimated_point_cloud.ply",
+        "ground_truth": "step_0014/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0014/front_raw_rgb.png",
@@ -231,6 +298,10 @@
     },
     {
       "step_index": 15,
+      "point_clouds": {
+        "estimated": "step_0015/estimated_point_cloud.ply",
+        "ground_truth": "step_0015/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0015/front_raw_rgb.png",
@@ -246,6 +317,10 @@
     },
     {
       "step_index": 16,
+      "point_clouds": {
+        "estimated": "step_0016/estimated_point_cloud.ply",
+        "ground_truth": "step_0016/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0016/front_raw_rgb.png",
@@ -261,6 +336,10 @@
     },
     {
       "step_index": 17,
+      "point_clouds": {
+        "estimated": "step_0017/estimated_point_cloud.ply",
+        "ground_truth": "step_0017/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0017/front_raw_rgb.png",
@@ -276,6 +355,10 @@
     },
     {
       "step_index": 18,
+      "point_clouds": {
+        "estimated": "step_0018/estimated_point_cloud.ply",
+        "ground_truth": "step_0018/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0018/front_raw_rgb.png",
@@ -291,6 +374,10 @@
     },
     {
       "step_index": 19,
+      "point_clouds": {
+        "estimated": "step_0019/estimated_point_cloud.ply",
+        "ground_truth": "step_0019/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0019/front_raw_rgb.png",
@@ -306,6 +393,10 @@
     },
     {
       "step_index": 20,
+      "point_clouds": {
+        "estimated": "step_0020/estimated_point_cloud.ply",
+        "ground_truth": "step_0020/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0020/front_raw_rgb.png",
@@ -321,6 +412,10 @@
     },
     {
       "step_index": 21,
+      "point_clouds": {
+        "estimated": "step_0021/estimated_point_cloud.ply",
+        "ground_truth": "step_0021/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0021/front_raw_rgb.png",
@@ -336,6 +431,10 @@
     },
     {
       "step_index": 22,
+      "point_clouds": {
+        "estimated": "step_0022/estimated_point_cloud.ply",
+        "ground_truth": "step_0022/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0022/front_raw_rgb.png",
@@ -351,6 +450,10 @@
     },
     {
       "step_index": 23,
+      "point_clouds": {
+        "estimated": "step_0023/estimated_point_cloud.ply",
+        "ground_truth": "step_0023/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0023/front_raw_rgb.png",
@@ -366,6 +469,10 @@
     },
     {
       "step_index": 24,
+      "point_clouds": {
+        "estimated": "step_0024/estimated_point_cloud.ply",
+        "ground_truth": "step_0024/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0024/front_raw_rgb.png",
@@ -381,6 +488,10 @@
     },
     {
       "step_index": 25,
+      "point_clouds": {
+        "estimated": "step_0025/estimated_point_cloud.ply",
+        "ground_truth": "step_0025/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0025/front_raw_rgb.png",
@@ -396,6 +507,10 @@
     },
     {
       "step_index": 26,
+      "point_clouds": {
+        "estimated": "step_0026/estimated_point_cloud.ply",
+        "ground_truth": "step_0026/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0026/front_raw_rgb.png",
@@ -411,6 +526,10 @@
     },
     {
       "step_index": 27,
+      "point_clouds": {
+        "estimated": "step_0027/estimated_point_cloud.ply",
+        "ground_truth": "step_0027/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0027/front_raw_rgb.png",
@@ -426,6 +545,10 @@
     },
     {
       "step_index": 28,
+      "point_clouds": {
+        "estimated": "step_0028/estimated_point_cloud.ply",
+        "ground_truth": "step_0028/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0028/front_raw_rgb.png",
@@ -441,6 +564,10 @@
     },
     {
       "step_index": 29,
+      "point_clouds": {
+        "estimated": "step_0029/estimated_point_cloud.ply",
+        "ground_truth": "step_0029/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0029/front_raw_rgb.png",
@@ -456,6 +583,10 @@
     },
     {
       "step_index": 30,
+      "point_clouds": {
+        "estimated": "step_0030/estimated_point_cloud.ply",
+        "ground_truth": "step_0030/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0030/front_raw_rgb.png",
@@ -471,6 +602,10 @@
     },
     {
       "step_index": 31,
+      "point_clouds": {
+        "estimated": "step_0031/estimated_point_cloud.ply",
+        "ground_truth": "step_0031/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0031/front_raw_rgb.png",
@@ -486,6 +621,10 @@
     },
     {
       "step_index": 32,
+      "point_clouds": {
+        "estimated": "step_0032/estimated_point_cloud.ply",
+        "ground_truth": "step_0032/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0032/front_raw_rgb.png",
@@ -501,6 +640,10 @@
     },
     {
       "step_index": 33,
+      "point_clouds": {
+        "estimated": "step_0033/estimated_point_cloud.ply",
+        "ground_truth": "step_0033/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0033/front_raw_rgb.png",
@@ -516,6 +659,10 @@
     },
     {
       "step_index": 34,
+      "point_clouds": {
+        "estimated": "step_0034/estimated_point_cloud.ply",
+        "ground_truth": "step_0034/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0034/front_raw_rgb.png",
@@ -531,6 +678,10 @@
     },
     {
       "step_index": 35,
+      "point_clouds": {
+        "estimated": "step_0035/estimated_point_cloud.ply",
+        "ground_truth": "step_0035/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0035/front_raw_rgb.png",
@@ -546,6 +697,10 @@
     },
     {
       "step_index": 36,
+      "point_clouds": {
+        "estimated": "step_0036/estimated_point_cloud.ply",
+        "ground_truth": "step_0036/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0036/front_raw_rgb.png",
@@ -561,6 +716,10 @@
     },
     {
       "step_index": 37,
+      "point_clouds": {
+        "estimated": "step_0037/estimated_point_cloud.ply",
+        "ground_truth": "step_0037/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0037/front_raw_rgb.png",
@@ -576,6 +735,10 @@
     },
     {
       "step_index": 38,
+      "point_clouds": {
+        "estimated": "step_0038/estimated_point_cloud.ply",
+        "ground_truth": "step_0038/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0038/front_raw_rgb.png",
@@ -591,6 +754,10 @@
     },
     {
       "step_index": 39,
+      "point_clouds": {
+        "estimated": "step_0039/estimated_point_cloud.ply",
+        "ground_truth": "step_0039/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0039/front_raw_rgb.png",
@@ -606,6 +773,10 @@
     },
     {
       "step_index": 40,
+      "point_clouds": {
+        "estimated": "step_0040/estimated_point_cloud.ply",
+        "ground_truth": "step_0040/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0040/front_raw_rgb.png",
@@ -621,6 +792,10 @@
     },
     {
       "step_index": 41,
+      "point_clouds": {
+        "estimated": "step_0041/estimated_point_cloud.ply",
+        "ground_truth": "step_0041/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0041/front_raw_rgb.png",
@@ -636,6 +811,10 @@
     },
     {
       "step_index": 42,
+      "point_clouds": {
+        "estimated": "step_0042/estimated_point_cloud.ply",
+        "ground_truth": "step_0042/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0042/front_raw_rgb.png",
@@ -651,6 +830,10 @@
     },
     {
       "step_index": 43,
+      "point_clouds": {
+        "estimated": "step_0043/estimated_point_cloud.ply",
+        "ground_truth": "step_0043/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0043/front_raw_rgb.png",
@@ -666,6 +849,10 @@
     },
     {
       "step_index": 44,
+      "point_clouds": {
+        "estimated": "step_0044/estimated_point_cloud.ply",
+        "ground_truth": "step_0044/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0044/front_raw_rgb.png",
@@ -681,6 +868,10 @@
     },
     {
       "step_index": 45,
+      "point_clouds": {
+        "estimated": "step_0045/estimated_point_cloud.ply",
+        "ground_truth": "step_0045/ground_truth_point_cloud.ply"
+      },
       "cameras": {
         "front": {
           "raw_rgb": "step_0045/front_raw_rgb.png",
@@ -691,6 +882,120 @@
           "raw_rgb": "step_0045/left_shoulder_raw_rgb.png",
           "mask": "step_0045/left_shoulder_mask.png",
           "masked_rgb": "step_0045/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 46,
+      "point_clouds": {
+        "estimated": "step_0046/estimated_point_cloud.ply",
+        "ground_truth": "step_0046/ground_truth_point_cloud.ply"
+      },
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0046/front_raw_rgb.png",
+          "mask": "step_0046/front_mask.png",
+          "masked_rgb": "step_0046/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0046/left_shoulder_raw_rgb.png",
+          "mask": "step_0046/left_shoulder_mask.png",
+          "masked_rgb": "step_0046/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 47,
+      "point_clouds": {
+        "estimated": "step_0047/estimated_point_cloud.ply",
+        "ground_truth": "step_0047/ground_truth_point_cloud.ply"
+      },
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0047/front_raw_rgb.png",
+          "mask": "step_0047/front_mask.png",
+          "masked_rgb": "step_0047/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0047/left_shoulder_raw_rgb.png",
+          "mask": "step_0047/left_shoulder_mask.png",
+          "masked_rgb": "step_0047/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 48,
+      "point_clouds": {
+        "estimated": "step_0048/estimated_point_cloud.ply",
+        "ground_truth": "step_0048/ground_truth_point_cloud.ply"
+      },
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0048/front_raw_rgb.png",
+          "mask": "step_0048/front_mask.png",
+          "masked_rgb": "step_0048/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0048/left_shoulder_raw_rgb.png",
+          "mask": "step_0048/left_shoulder_mask.png",
+          "masked_rgb": "step_0048/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 49,
+      "point_clouds": {
+        "estimated": "step_0049/estimated_point_cloud.ply",
+        "ground_truth": "step_0049/ground_truth_point_cloud.ply"
+      },
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0049/front_raw_rgb.png",
+          "mask": "step_0049/front_mask.png",
+          "masked_rgb": "step_0049/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0049/left_shoulder_raw_rgb.png",
+          "mask": "step_0049/left_shoulder_mask.png",
+          "masked_rgb": "step_0049/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 50,
+      "point_clouds": {
+        "estimated": "step_0050/estimated_point_cloud.ply",
+        "ground_truth": "step_0050/ground_truth_point_cloud.ply"
+      },
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0050/front_raw_rgb.png",
+          "mask": "step_0050/front_mask.png",
+          "masked_rgb": "step_0050/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0050/left_shoulder_raw_rgb.png",
+          "mask": "step_0050/left_shoulder_mask.png",
+          "masked_rgb": "step_0050/left_shoulder_masked_rgb.png"
+        }
+      }
+    },
+    {
+      "step_index": 51,
+      "point_clouds": {
+        "estimated": "step_0051/estimated_point_cloud.ply",
+        "ground_truth": "step_0051/ground_truth_point_cloud.ply"
+      },
+      "cameras": {
+        "front": {
+          "raw_rgb": "step_0051/front_raw_rgb.png",
+          "mask": "step_0051/front_mask.png",
+          "masked_rgb": "step_0051/front_masked_rgb.png"
+        },
+        "left_shoulder": {
+          "raw_rgb": "step_0051/left_shoulder_raw_rgb.png",
+          "mask": "step_0051/left_shoulder_mask.png",
+          "masked_rgb": "step_0051/left_shoulder_masked_rgb.png"
         }
       }
     }

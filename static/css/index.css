@@ -265,12 +265,30 @@ body {
 
 .rollout-sequence-viewport {
   width: 100%;
+  min-width: 0;
   overflow-x: auto;
   padding-bottom: 0.25rem;
 }
 
+.rollout-sequence-comparison {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) 1px minmax(0, 0.9fr);
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.rollout-sequence-images {
+  align-self: center;
+}
+
+.rollout-sequence-divider {
+  width: 1px;
+  min-height: 100%;
+  background: #cfd6df;
+}
+
 .rollout-sequence-table {
-  width: 50%;
+  width: 100%;
   min-width: 480px;
   margin: 0 auto;
   table-layout: fixed;
@@ -327,6 +345,87 @@ body {
   object-fit: cover;
 }
 
+.rollout-point-cloud-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.rollout-point-cloud-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.rollout-point-cloud-title {
+  margin: 0 0 0.55rem;
+  color: #344054;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.rollout-point-cloud-viewer {
+  position: relative;
+  min-height: 280px;
+  flex: 1;
+  overflow: hidden;
+  border: 1px solid #d9dee7;
+  border-radius: 7px;
+  background: #08111f;
+}
+
+.rollout-point-cloud-viewer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+.rollout-point-cloud-viewer canvas:active {
+  cursor: grabbing;
+}
+
+.rollout-point-cloud-viewer canvas:focus-visible {
+  outline: 3px solid rgba(72, 149, 239, 0.7);
+  outline-offset: -3px;
+}
+
+.rollout-point-cloud-status {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(8, 17, 31, 0.82);
+  color: #d7e2f0;
+  font-size: 0.75rem;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.rollout-point-cloud-status.is-error {
+  color: #ffb4b4;
+}
+
+.rollout-point-cloud-help {
+  position: absolute;
+  right: 0.35rem;
+  bottom: 0.3rem;
+  left: 0.35rem;
+  color: rgba(229, 237, 247, 0.72);
+  font-size: 0.58rem;
+  line-height: 1.25;
+  text-align: center;
+  text-shadow: 0 1px 2px #000;
+  pointer-events: none;
+}
+
 @media screen and (max-width: 768px) {
   .rollout-sequence-panel {
     padding: 1rem 0.75rem;
@@ -343,6 +442,21 @@ body {
   .rollout-sequence-slider-row {
     grid-template-columns: 1fr;
     gap: 0.3rem;
+  }
+
+  .rollout-sequence-comparison {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  .rollout-sequence-divider {
+    width: 100%;
+    min-height: 1px;
+    height: 1px;
+  }
+
+  .rollout-point-cloud-viewer {
+    min-height: 220px;
   }
 }
 
