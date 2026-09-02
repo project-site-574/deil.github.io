@@ -200,6 +200,26 @@ body {
   display: none;
 }
 
+.depth-noise-figure {
+  max-width: 750px;
+  margin: 0.75rem auto 1.5rem !important;
+}
+
+.depth-noise-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.depth-noise-caption {
+  max-width: 850px;
+  margin: 1.5rem auto 0 !important;
+  color: #4a4a4a;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
 .rollout-sequence-panel {
   margin-top: 2.5rem;
   margin-bottom: 3rem;
